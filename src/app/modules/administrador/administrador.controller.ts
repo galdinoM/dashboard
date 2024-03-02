@@ -1,34 +1,25 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
 import { AdministradorService } from './administrador.service';
-import { CreateAdministradorDto } from './dto/create-administrador.dto';
-import { UpdateAdministradorDto } from './dto/update-administrador.dto';
+import { AuthService } from '../auth/auth.service';
 
-@Controller('administrador')
+
+@Controller('auth')
 export class AdministradorController {
-  constructor(private readonly administradorService: AdministradorService) {}
+  constructor(
+    private authService: AuthService,
+    private administradorService: AdministradorService,
+  ) {}
 
-  @Post()
-  create(@Body() createAdministradorDto: CreateAdministradorDto) {
-    return this.administradorService.create(createAdministradorDto);
-  }
+  @Post('login')
+  async login(@Body() body: { email: string; password: string }): Promise<{ token: string }> {
+    const { email, password } = body;
+    const adminUser = await this.administradorService.findOneByEmail(email);
 
-  @Get()
-  findAll() {
-    return this.administradorService.findAll();
-  }
+    if (!adminUser || adminUser.password !== password) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.administradorService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAdministradorDto: UpdateAdministradorDto) {
-    return this.administradorService.update(+id, updateAdministradorDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.administradorService.remove(+id);
+    const token = await this.authService.generateJwtToken(adminUser);
+    return { token };
   }
 }

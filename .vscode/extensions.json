@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "eamodio.gitlens",
+    "oderwat.indent-rainbow",
+    "mikestead.dotenv",
+    "irongeek.vscode-env",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "rvest.vs-code-prettier-eslint",
+    "chakrounanas.turbo-console-log"
+  ]
+}

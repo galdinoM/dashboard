@@ -1,26 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAdministradorDto } from './dto/create-administrador.dto';
-import { UpdateAdministradorDto } from './dto/update-administrador.dto';
+import { PrismaService } from 'src/app/db/prisma/prisma.service';
 
 @Injectable()
 export class AdministradorService {
-  create(createAdministradorDto: CreateAdministradorDto) {
-    return 'This action adds a new administrador';
+  constructor(private prismaService: PrismaService) { }
+
+  async create(data: any): Promise<any> {
+    return this.prismaService.administrador.create({ data });
   }
 
-  findAll() {
-    return `This action returns all administrador`;
+  async findAll(): Promise<any[]> {
+    return this.prismaService.administrador.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} administrador`;
+  async findOneByEmail(email: string): Promise<any | null> {
+    return this.prismaService.administrador.findUnique({ where: { email } });
   }
 
-  update(id: number, updateAdministradorDto: UpdateAdministradorDto) {
-    return `This action updates a #${id} administrador`;
+  async findById(id: number): Promise<any | null> {
+    return this.prismaService.administrador.findUnique({ where: { id } });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} administrador`;
+  async remove(id: number): Promise<any> {
+    return this.prismaService.administrador.delete({ where: { id } });
   }
 }
